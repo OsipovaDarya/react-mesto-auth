@@ -12,9 +12,11 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 import * as auth from '../utils/auth';
+import Login from './Login';
+import Register from './Register';
 
 
 
@@ -30,29 +32,45 @@ function App() {
   const [currentUser, setCurrentUser] = useState({});
 
   const [loggedIn, setloggedIn] = useState(false);
-  const [dataInfo, setDataInfo] = useState({
-    email: "",
-    password: ""
-  })
+  const [emailInfo, setEmailInfo] = useState("")
 
+  const navigate = useNavigate();
 
-  function handelLoginCheck() {
-    setloggedIn(true)
+  function handelLoginClick({ password, email }) {
+    return auth.authorize(password, email)
+      .then((data) => {
+        if (data.jwt) {
+          localStorage.setItem("jwt", data.jwt)
+          setloggedIn(true)
+          setEmailInfo(email);
+          navigate("/")
+        }
+      })
   }
 
-  function handelCheckToken() {
+
+  function handelRegistrClick({ email, password }) {
+    return auth.register(email, password)
+      .then(() => {
+        navigate("/")
+      })
+  }
+
+
+  useEffect(() => {
     const jwt = localStorage.getItem("jwt");
     if (jwt) {
       auth.checkToken(jwt).then((res) => {
         setloggedIn(true);
-        setDataInfo({
-          username: res.username,
+        setEmailInfo({
           email: res.email,
         });
-        // navigate("/");
+        navigate("/");
       });
     }
-  }
+  }, [navigate]);
+
+
 
   useEffect(() => {
     Promise.all([api.getInfo(), api.getInitialCards()])
@@ -171,9 +189,9 @@ function App() {
           <Routes>
             <Route path='/' element={
 
-              <ProtectedRoute>
-                csomponent={Main}
-                loggedIn={true}
+              <ProtectedRoute
+                component={Main}
+                loggedIn={loggedIn}
                 onEditAvatar={handleEditAvatarClick}
                 onEditProfile={handleEditProfileClick}
                 onAddPlace={handleAddPlaceClick}
@@ -183,10 +201,13 @@ function App() {
 
                 onCardLike={handleCardLike}
                 onCardDelete={handleCardDelete}
-              </ProtectedRoute>
-
-            }>
+              />}>
             </Route>
+            <Route path="/sign-up" element={
+              <Register register={handelRegistrClick} />}></Route>
+            <Route path="/sign-in" element={
+              <Login login={handelLoginClick} />}></Route>
+
           </Routes>
           <Footer />
           <ImagePopup

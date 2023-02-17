@@ -1,12 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import * as auth from '../utils/auth';
 
 
 
-function Login({ handelLoginCheck }) {
-  const navigate = useNavigate();
+
+function Login({ handleLogin }) {
   const [userInfo, setUserInfo] = useState({
     email: '',
     password: '',
@@ -14,24 +13,24 @@ function Login({ handelLoginCheck }) {
   const [message, setMessage] = useState("")
 
   function handleChange(e) {
-    const { name, value } = e.target;
+    const { email, value } = e.target;
 
     setUserInfo({
       ...userInfo,
-      [name]: value,
+      [email]: value,
     })
   }
 
   function handleSubmit(e) {
     e.preventDefault();
 
-    if (!userInfo.username || !userInfo.password) {
+    if (!userInfo.email || !userInfo.password) {
       return;
     }
 
     handleLogin(userInfo)
       .then(() => {
-        setUserData({ email: "", password: "" });
+        setUserInfo({ email: "", password: "" });
         setMessage("");
       })
       .catch((error) => {
@@ -40,7 +39,6 @@ function Login({ handelLoginCheck }) {
   }
   return (
     <div onSubmit={handleSubmit} className="login">
-      <Logo title={"CryptoDucks"} />
       <p className="login__welcome">
         Это приложение содержит конфиденциальную информацию. Пожалуйста, войдите
         или зарегистрируйтесь, чтобы получить доступ к CryptoDucks.
@@ -53,7 +51,7 @@ function Login({ handelLoginCheck }) {
           required
           name="username"
           type="text"
-          value={userData.username || ""}
+          value={userInfo.email || ""}
           onChange={handleChange}
         />
         <label htmlFor="password">Пароль:</label>
@@ -62,7 +60,7 @@ function Login({ handelLoginCheck }) {
           required
           name="password"
           type="password"
-          value={userData.password || ""}
+          value={userInfo.password || ""}
           onChange={handleChange}
         />
         <div className="login__button-container">
@@ -74,7 +72,7 @@ function Login({ handelLoginCheck }) {
 
       <div className="login__signup">
         <p>Ещё не зарегистрированы?</p>
-        <Link to="/register" className="signup__link">
+        <Link to="/sign-up" className="signup__link">
           Зарегистрироваться
         </Link>
       </div>

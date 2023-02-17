@@ -1,61 +1,58 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import * as auth from '../utils/auth';
+import { Link, } from "react-router-dom";
 
-function Register() {
-  const navigate = useNavigate();
+
+function Register({ handleRegisterClick }) {
+
   const [userInfo, setUserInfo] = useState({
-    email: '',
-    password: '',
+    email: ''
   });
 
   const [message, setMessage] = useState("")
 
   function handleChange(e) {
-    const { name, value } = e.target;
+    const { email, value } = e.target;
 
     setUserInfo({
       ...userInfo,
-      [name]: value,
+      [email]: value,
     })
   }
 
   function handleSubmit(e) {
     e.preventDefault();
-    auth.register(password, email)
+    if (!userInfo.password || !userInfo.email) {
+      handleRegisterClick(userInfo);
+    }
+    handleRegisterClick()
       .then(() => {
         setMessage("")
-        navigate("/home")
-      }).cath((error) => {
+
+      })
+      .cath((error) => {
         setMessage(`Что-то пошло не так! ${error}`)
       }
       )
   }
 
   return (
-    <main className="content">
+    <main className="register">
       <p className="register__welcome">
         Регистрация
       </p>
       <p className="register__error">{message}</p>
-      <form onSubmit={handleSubmit} className="register__form">
-        <label htmlFor="email">
-          Email:
-        </label>
-        <input id="email" name="email" type="email" value={userInfo.email || ''} onChange={handleChange} />
-        <label htmlFor="password">
-          Пароль:
-        </label>
-        <input id="email" name="email" type="email" value={userInfo.password || ''} onChange={handleChange} />
+      <form onSubmit={handleSubmit} className="register__form" onChange={handleChange}>
+        <input id="email" name="email" type="email" value={userInfo.email || ''} />
+        <input id="password" name="password" type="password" value={userInfo.password || ''} />
         <div className="register__button-container">
-          <button type="submit" onSubmit={handleSubmit} className="register__link">Зарегистрироваться</button>
+          <button type="submit" onSubmit={handleSubmit} onChange={handleChange} className="register__link">Зарегистрироваться</button>
         </div>
       </form>
       <div className="register__signin">
         <p>Уже зарегистрированы?</p>
-        <Link to="login" className="register__login-link">Войти</Link>
+        <Link to="/" className="register__login-link">Войти</Link>
       </div>
-    </main>
+    </main >
   );
 
 

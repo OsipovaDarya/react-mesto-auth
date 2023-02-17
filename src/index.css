@@ -57,3 +57,7 @@
 @import url(../src/blocks/popup/__button/_disabled/popup__button_disabled.css);
 @import url(../src/blocks/popup/__figure/popup__figure.css);
 @import url(../src/blocks/popup/__body/popup__body.css);
+
+@import url(../src/blocks/register/register.css);
+@import url(../src/blocks/register/_welcome/register__welcome.css);
+@import url(../src/blocks/register/__form/register__form.css);
