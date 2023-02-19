@@ -19,9 +19,11 @@ function Header(props) {
         } />
         <Route path='/' element={
           <>
-            <div className='header__email'>{props.emailInfo.email}</div>
-            <div className='header__exit'
-              onClick={props.exit}>Выйти</div>
+            <div className='header__container'>
+              <div className='header__email'>{props.emailInfo}</div>
+              <div className='header__exit'
+                onClick={props.exit}>Выйти</div>
+            </div>
           </>
         } />
 

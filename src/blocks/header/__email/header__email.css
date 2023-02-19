@@ -1,14 +1,9 @@
-.header__entrance {
+.header__email {
   font-family: "Inter";
   font-style: normal;
-  font-weight: 400;
+  font-weight: 500;
   font-size: 18px;
   line-height: 22px;
   color: #ffffff;
-  text-decoration: none;
   margin-top: 10px;
-}
-
-.header__entrance:hover {
-  opacity: 0.6;
 }

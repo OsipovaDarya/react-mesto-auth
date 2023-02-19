@@ -79,11 +79,10 @@ function App() {
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
     if (jwt) {
-      auth.checkToken(jwt).then((res) => {
+      auth.checkToken(jwt).then(({ data: { email } }) => {
         setloggedIn(true);
-        setEmailInfo({
-          email: res.email,
-        });
+
+        setEmailInfo(email);
 
         navigate("/");
       });

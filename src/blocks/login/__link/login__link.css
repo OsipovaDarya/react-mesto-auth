@@ -11,4 +11,9 @@
   font-size: 18px;
   line-height: 22px;
   text-align: center;
+  cursor: pointer;
+}
+
+.login__link:hover {
+  opacity: 0.6;
 }
