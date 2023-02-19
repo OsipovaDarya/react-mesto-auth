@@ -5,54 +5,62 @@ import { Link, } from "react-router-dom";
 function Register({ handleRegisterClick }) {
 
   const [userInfo, setUserInfo] = useState({
-    email: ''
+    email: '',
+    password: '',
   });
 
-  const [message, setMessage] = useState("")
 
-  function handleChange(e) {
-    const { email, value } = e.target;
+  function handleEmailChange(e) {
+    const email = e.target.value;
+    setUserInfo({
+      ...userInfo,
+      email,
+    })
+  }
+
+  function handlePasswordChange(e) {
+    const password = e.target.value;
 
     setUserInfo({
       ...userInfo,
-      [email]: value,
+      password
     })
   }
 
   function handleSubmit(e) {
     e.preventDefault();
-    if (!userInfo.password || !userInfo.email) {
-      handleRegisterClick(userInfo);
+    if (!userInfo.email || !userInfo.password) {
+      return false;
     }
-    handleRegisterClick()
-      .then(() => {
-        setMessage("")
+    handleRegisterClick(userInfo)
 
-      })
-      .cath((error) => {
-        setMessage(`Что-то пошло не так! ${error}`)
-      }
-      )
+    setUserInfo({
+      email: '',
+      password: '',
+    })
+
   }
 
   return (
-    <main className="register">
+    <div className="register" onSubmit={handleSubmit}>
       <p className="register__welcome">
         Регистрация
       </p>
-      <p className="register__error">{message}</p>
-      <form onSubmit={handleSubmit} className="register__form" onChange={handleChange}>
-        <input id="email" name="email" type="email" value={userInfo.email || ''} />
-        <input id="password" name="password" type="password" value={userInfo.password || ''} />
+      <p className="register__error"></p>
+      <form className="register__form">
+        <input className="register__input" id="email" name="email" type="email"
+          value={userInfo.email} onChange={handleEmailChange} placeholder="Email" />
+        <input className="register__input" id="password" name="password" type="password"
+          value={userInfo.password || ''} onChange={handlePasswordChange} placeholder="Пароль" />
         <div className="register__button-container">
-          <button type="submit" onSubmit={handleSubmit} onChange={handleChange} className="register__link">Зарегистрироваться</button>
+          <button type="submit" className="register__link">Зарегистрироваться</button>
         </div>
       </form>
       <div className="register__signin">
         <p>Уже зарегистрированы?</p>
         <Link to="/" className="register__login-link">Войти</Link>
       </div>
-    </main >
+    </div >
   );
 
 

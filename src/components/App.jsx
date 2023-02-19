@@ -17,6 +17,7 @@ import ProtectedRoute from './ProtectedRoute';
 import * as auth from '../utils/auth';
 import Login from './Login';
 import Register from './Register';
+import InfoTooltip from './InfoTooltip';
 
 
 
@@ -24,6 +25,7 @@ function App() {
   const [isEditAvatarPopupOpend, setIsEditAvatarOpend] = useState(false);
   const [isEditProfilePopupOpend, setIsEditProfileOpend] = useState(false);
   const [isEditAddPlacePopupOpend, setIsEditAddPlaceOpend] = useState(false);
+  const [isEditInfoTooltip, setIsEditInfoTooltip] = useState(false);
 
 
   const [cards, setCards] = useState([]);
@@ -33,27 +35,44 @@ function App() {
 
   const [loggedIn, setloggedIn] = useState(false);
   const [emailInfo, setEmailInfo] = useState("")
+  const [registrForm, setRegistrForm] = useState({ status: false, text: "" });
+
 
   const navigate = useNavigate();
 
   function handelLoginClick({ password, email }) {
-    return auth.authorize(password, email)
+    auth.authorize(email, password)
       .then((data) => {
-        if (data.jwt) {
-          localStorage.setItem("jwt", data.jwt)
-          setloggedIn(true)
-          setEmailInfo(email);
-          navigate("/")
-        }
+        localStorage.setItem("jwt", data.token)
+        setloggedIn(true)
+        setEmailInfo(email);
+        navigate("/", { replace: true })
+      })
+      .catch(() => {
+
       })
   }
 
 
   function handelRegistrClick({ email, password }) {
-    return auth.register(email, password)
-      .then(() => {
-        navigate("/")
+    auth.register(email, password)
+      .then((res) => {
+        if (res) {
+          setRegistrForm({
+            status: true,
+            text: 'Вы успешно зарегистрировались!',
+          })
+          navigate('/sign-in', { replace: true })
+        }
       })
+      .catch(() => {
+        setRegistrForm({
+          status: false,
+          text: 'Что-то пошло не так! Попробуйте ещё раз.',
+
+        })
+      })
+      .finally(() => setIsEditInfoTooltip(true))
   }
 
 
@@ -65,10 +84,17 @@ function App() {
         setEmailInfo({
           email: res.email,
         });
+
         navigate("/");
       });
     }
   }, [navigate]);
+
+  function exit() {
+    localStorage.removeItem('jwt');
+    navigate('/sign-in');
+    setloggedIn(false);
+  }
 
 
 
@@ -106,7 +132,6 @@ function App() {
           console.log(err);
         })
     }
-
   }
 
   function handleCardDelete(card) {
@@ -177,6 +202,7 @@ function App() {
     setIsEditProfileOpend(false);
     setIsEditAddPlaceOpend(false);
     setSelectedCard(null);
+    setIsEditInfoTooltip(false);
   }
 
 
@@ -185,7 +211,10 @@ function App() {
     <CurrentUserContext.Provider value={currentUser}>
       <div className="root">
         <div className="page">
-          <Header />
+          <Header
+            emailInfo={emailInfo}
+            exit={exit}
+          />
           <Routes>
             <Route path='/' element={
 
@@ -204,12 +233,17 @@ function App() {
               />}>
             </Route>
             <Route path="/sign-up" element={
-              <Register register={handelRegistrClick} />}></Route>
+              <Register handleRegisterClick={handelRegistrClick} />}></Route>
             <Route path="/sign-in" element={
-              <Login login={handelLoginClick} />}></Route>
+              <Login handleLogin={handelLoginClick} />}></Route>
 
           </Routes>
           <Footer />
+          <InfoTooltip
+            onClose={closeAllPopups}
+            isOpen={isEditInfoTooltip}
+            registrForm={registrForm}
+          ></InfoTooltip>
           <ImagePopup
             card={selectedCard}
             onClose={closeAllPopups}
