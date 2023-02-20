@@ -4,6 +4,7 @@ import { Link, } from "react-router-dom";
 
 function Register({ handleRegisterClick }) {
 
+
   const [userInfo, setUserInfo] = useState({
     email: '',
     password: '',

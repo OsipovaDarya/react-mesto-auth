@@ -48,8 +48,8 @@ function App() {
         setEmailInfo(email);
         navigate("/", { replace: true })
       })
-      .catch(() => {
-
+      .catch((err) => {
+        console.log(err);
       })
   }
 
@@ -85,7 +85,11 @@ function App() {
         setEmailInfo(email);
 
         navigate("/");
-      });
+
+      })
+        .catch((err) => {
+          console.log(err);
+        })
     }
   }, [navigate]);
 

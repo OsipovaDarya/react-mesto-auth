@@ -3,7 +3,9 @@ import { useContext, useEffect, useState } from "react";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
 
+
 function AddPlacePopup(props) {
+
   const [addName, setAddName] = useState('')
   const [addlink, setAddLink] = useState('')
   const currentUser = useContext(CurrentUserContext);
